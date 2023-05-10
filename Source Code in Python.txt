@@ -9,7 +9,7 @@ article.download()
 article.parse()
 print(article.text)
 
-##Analys
+##Analysis
 text = article.text
 blob = TextBlob(text)
 sentiment = blob.sentiment.polarity # -1 to +1
