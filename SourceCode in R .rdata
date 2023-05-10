@@ -1,0 +1,43 @@
+##Libraries
+library(tm)
+library(SnowballC)
+library(cluster)
+library(proxy)
+library(sentimentr)
+
+##Load Dataset
+txt <- c ()
+##Convert to vector and corpus to use in (tm) package
+txt <- VectorSource(txt)
+txt <- Corpus(txt)
+##Start Pre-Processing
+txt <- tm_map(txt, content_transformer (tolower))
+txt <- tm_map(txt, content_transformer (removeNumbers))
+txt <- tm_map(txt, content_transformer (removePunctuation))
+txt <- tm_map(txt, content_transformer (removeWords), stopwords ("english"))
+txt <- tm_map(txt, stemDocument)
+txt <- tm_map(txt, stripWhitespace)
+inspect(txt)
+##End of Pre-Processing
+
+##Change data format to termDocumentMatrix
+tdm <- TermDocumentMatrix(txt)
+inspect(tdm)
+View(as.matrix(tdm[1:15001, 1:1])) 
+
+##Star Custering
+tdm_tfidf <- weightTfIdf (tdm)
+tdm_tfidf <- removeSparseTerms(tdm_tfidf, 0.60)
+tfidf_mat <- as.matrix (tdm_tfidf)
+dist.mat <- dist (tfidf_mat, method = "cosine")
+cl_km <- kmeans (dist.mat, 5)
+cl_km
+
+clusplot (tfidf_mat, cl_km$cluster, color = T, main = "Kmeans clustering")
+points <- cmdscale (dist.mat, k=4)
+plot (points, col=as.factor(cl_km$cluster), main = "points Kmeans clustering")
+##end Clustering
+
+##Sentiment Analysis
+emo <- emotion(txt)
+plot(emo)
