@@ -4,6 +4,7 @@ library(SnowballC)
 library(cluster)
 library(proxy)
 library(sentimentr)
+library(wordcloud)
 
 ##Load Dataset
 txt <- c ()
